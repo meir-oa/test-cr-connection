@@ -30,14 +30,14 @@ TOKEN=$(gcloud auth print-identity-token)
 
 # Test Service A
 curl -X POST \
-   https://service-a-m7t2o2ljoa-ew.a.run.app/send-to-b \
+   https://service-a-13142871829.europe-west1.run.app/send-to-b \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message": "Test from curl"}'
 
 # Test Service B
 curl -X POST \
-  https://service-b-m7t2o2ljoa-ew.a.run.app/send-to-a \
+  https://service-b-13142871829.europe-west1.run.app/send-to-a \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message": "Test from curl"}'
