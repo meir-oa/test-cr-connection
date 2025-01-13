@@ -69,7 +69,7 @@ def receive_from_a():
         data = request.get_json()
         # Process the received data
         processed_data = {
-            "message": "Data received by Service B",
+            "message": f"Data received by Service B by pinging {SERVICE_A_URL}",
             "received_data": data
         }
         return jsonify(processed_data), 200
