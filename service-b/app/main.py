@@ -1,0 +1,80 @@
+import os
+from flask import Flask, request, jsonify
+import google.auth.transport.requests
+import google.oauth2.id_token
+import requests
+import json
+
+app = Flask(__name__)
+
+# Configuration
+SERVICE_A_URL = os.getenv('SERVICE_A_URL', 'https://service-a-m7t2o2ljoa-ew.a.run.app')  # Replace with actual URL
+SERVICE_A_AUDIENCE = SERVICE_A_URL
+
+def make_authorized_post_request(endpoint, audience, data):
+    """Makes an authorized POST request to another Cloud Run service"""
+    auth_req = google.auth.transport.requests.Request()
+    id_token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
+
+    headers = {
+        'Authorization': f'Bearer {id_token}',
+        'Content-Type': 'application/json',
+    }
+
+    response = requests.post(
+        endpoint,
+        headers=headers,
+        json=data
+    )
+    return response
+
+def verify_token(request):
+    """Verifies the incoming token"""
+    if 'Authorization' not in request.headers:
+        return None
+
+    token = request.headers['Authorization'].split(' ').pop()
+
+    try:
+        auth_req = google.auth.transport.requests.Request()
+        claims = google.oauth2.id_token.verify_oauth2_token(
+            token, auth_req)
+        return claims
+    except Exception as e:
+        print(f"Token verification failed: {str(e)}")
+        return None
+
+@app.route('/send-to-a', methods=['POST'])
+def send_to_a():
+    """Endpoint to send data to Service A"""
+    try:
+        data = request.get_json()
+        response = make_authorized_post_request(
+            f"{SERVICE_A_URL}/receive-from-b",
+            SERVICE_A_AUDIENCE,
+            data
+        )
+        return jsonify({"status": "success", "response": response.json()}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/receive-from-a', methods=['POST'])
+def receive_from_a():
+    """Endpoint to receive data from Service A"""
+    claims = verify_token(request)
+    if not claims:
+        return jsonify({"status": "error", "message": "Unauthorized"}), 401
+
+    try:
+        data = request.get_json()
+        # Process the received data
+        processed_data = {
+            "message": "Data received by Service B",
+            "received_data": data
+        }
+        return jsonify(processed_data), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
