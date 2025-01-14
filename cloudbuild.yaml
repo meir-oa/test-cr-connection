@@ -26,10 +26,13 @@ steps:
       - '${_REGION}'
       - '--platform'
       - 'managed'
+      - '--network'
+      - '${_VPC_NETWORK}'
+      - '--subnet'
+      - '${_VPC_SUBNET}'
       - '--set-env-vars'
-      - 'SERVICE_B_URL=${_SERVICE_B_URL}'
+      - 'SERVICE_B_URL=http://service-b.internal'
     id: 'deploy-service-a'
-
 
   # Build and push service-b
   - name: 'gcr.io/cloud-builders/docker'
@@ -58,13 +61,21 @@ steps:
       - '${_REGION}'
       - '--platform'
       - 'managed'
+      - '--network'
+      - '${_VPC_NETWORK}'
+      - '--subnet'
+      - '${_VPC_SUBNET}'
+      - '--ingress'
+      - 'internal'
       - '--set-env-vars'
-      - 'SERVICE_A_URL=${_SERVICE_A_URL}'
+      - 'SERVICE_A_URL=http://service-a.internal'
     id: 'deploy-service-b'
 
 substitutions:
   _REGION: 'europe-west1'
-  _REPOSITORY: 'cloud-run-source-deploy'  # Your Artifact Registry repository name
+  _REPOSITORY: 'cloud-run-source-deploy'
+  _VPC_NETWORK: 'vpc-sos-dashboard'
+  _VPC_SUBNET: 'vpc-sos-dashboard-subnet'
 
 images:
   - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a'

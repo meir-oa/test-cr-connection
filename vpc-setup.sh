@@ -6,7 +6,6 @@ gcloud run services update service-a \
     --region=europe-west1 \
     --network=vpc-sos-dashboard \
     --subnet=vpc-sos-dashboard-subnet \
-    --ingress=internal \
     --platform=managed \
     --project=search-cdo
 
