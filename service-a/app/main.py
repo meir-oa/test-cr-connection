@@ -8,7 +8,7 @@ import json
 app = Flask(__name__)
 
 # Configuration
-SERVICE_B_URL = os.getenv('SERVICE_B_URL', 'https://service-b-m7t2o2ljoa-ew.a.run.app')  # Replace with actual URL
+SERVICE_B_URL = os.getenv('SERVICE_B_URL', 'http://service-b.internal')  # Replace with actual URL
 SERVICE_B_AUDIENCE = SERVICE_B_URL
 
 def make_authorized_post_request(endpoint, audience, data):

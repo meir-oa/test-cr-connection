@@ -4,14 +4,14 @@ steps:
     args:
       - 'build'
       - '-t'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a:${SHORT_SHA}'
       - './service-a'
     id: 'build-service-a'
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a:${SHORT_SHA}'
     id: 'push-service-a'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -21,7 +21,7 @@ steps:
       - 'deploy'
       - 'service-a'
       - '--image'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-a:${SHORT_SHA}'
       - '--region'
       - '${_REGION}'
       - '--platform'
@@ -36,14 +36,14 @@ steps:
     args:
       - 'build'
       - '-t'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-b'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-b:${SHORT_SHA}'
       - './service-b'
     id: 'build-service-b'
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-b'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-b:${SHORT_SHA}'
     id: 'push-service-b'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -53,7 +53,7 @@ steps:
       - 'deploy'
       - 'service-b'
       - '--image'
-      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-b'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/service-b:${SHORT_SHA}'
       - '--region'
       - '${_REGION}'
       - '--platform'
